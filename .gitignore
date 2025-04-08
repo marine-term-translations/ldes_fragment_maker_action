@@ -1,0 +1,5 @@
+# Ignore p02 folder
+p02/
+gathered.json
+objects.json
+tasks.md

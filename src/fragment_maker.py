@@ -26,9 +26,26 @@ with open(
 ) as f:
     objects_file = json.load(f)
 
+# Filter objects by branch
+filtered_objects = [obj for obj in objects_file if obj.get("branch") == args.branch]
+
+# Search for matching .yml files across all folders and read their contents
+gathered_data = []
+project_root = pathlib.Path(__file__).parent.parent
+for obj in filtered_objects:
+    matching_files = list(project_root.rglob(obj["file_name"]))
+    for yml_file in matching_files:
+        if yml_file.exists():
+            with open(yml_file, "r", encoding="utf-8") as yml:
+                content = yaml.safe_load(yml)
+                gathered_data.append(
+                    {"file_name": obj["file_name"], "content": content}
+                )
+
+# Write gathered data to gathered.json
 with open(
-    pathlib.Path(__file__).parent / f"../objects.json",
+    pathlib.Path(__file__).parent / f"../gathered.json",
     "w",
     encoding="utf-8",
 ) as f:
-    json.dump(objects_file, f, indent=4)
+    json.dump(gathered_data, f, indent=4)
