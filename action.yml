@@ -1,0 +1,14 @@
+name: "LDES fragment maker"
+description: "This action will create a LDES fragment from a LDES stream."
+author: "Decruw Cedric"
+branding:
+  icon: "git-branch"
+  color: "blue"
+inputs:
+  branch:
+    description: "The name of the branch to use for the merge."
+    required: true
+    default: "main"
+runs:
+  using: "docker"
+  image: "Dockerfile"
