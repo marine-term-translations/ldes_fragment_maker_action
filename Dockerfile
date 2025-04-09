@@ -15,7 +15,6 @@ COPY src /src
 RUN pip install poetry
 RUN pip install pyyaml pycountry validators pyrdfj2 rdflib
 RUN pip install git+https://github.com/vliz-be-opsci/py-sema.git
-RUN poetry install --no-root
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
