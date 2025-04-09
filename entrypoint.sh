@@ -15,10 +15,6 @@ echo "Branch name is:" $INPUT_BRANCH
 cd src
 ls -al
 
-npm install -g @treecg/actor-init-ldes-client
-npm install -g yaml 
-npm list --depth=0
-
 cd ..
 cd ./github/workspace
 git config --global --add safe.directory /github/workspace
@@ -29,10 +25,7 @@ git config --global user.email 'actions@github.com'
 cd ../..
 cd src
 
-# executing the setup.sh script
-bash setup.sh
-
-python3 fragment_maker.py --branch $INPUT_BRANCH
+python fragment_maker.py --branch $INPUT_BRANCH
 
 
 

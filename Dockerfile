@@ -10,15 +10,11 @@ RUN apt-get install -y rsync
 
 # copy over src folder
 COPY src /src
-COPY package.json /package.json
-COPY package-lock.json /package-lock.json
-COPY poetry.lock /poetry.lock
-COPY pyproject.toml /pyproject.toml
 
 # install dependencies
-RUN npm install
 RUN pip install poetry
 RUN pip install pyyaml pycountry validators pyrdfj2 rdflib
+RUN pip install git+https://github.com/vliz-be-opsci/py-sema.git
 RUN poetry install --no-root
 
 COPY entrypoint.sh /entrypoint.sh

@@ -1,2 +1,85 @@
-ttl here for fragment
-// This is a template for a fragment of a turtle file.
+{#
+    ldes fragment template
+    | Description: This template is used to generate the LDES fragment
+    | @param this_fragment_delta: The delta of this fragment
+    | @param next_fragment_delta: The delta of the next fragment
+    | @param collection: The collection name
+    | @param retention_period: The retention period of the fragment
+    | @param set['qres']: The query results
+    #}
+    @prefix tree: <https://w3id.org/tree#> .
+    @prefix ldes: <https://w3id.org/ldes#> .
+    @prefix dc: <http://purl.org/dc/terms/> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+    
+    <http://example.org/ldes/{{this_fragment_delta}}>
+        a tree:Node ;
+        {% if next_fragment_delta %}
+        tree:relation [
+          a tree:LessThanRelation ;
+          tree:node <http://example.org/ldes/{{next_fragment_delta}}> ;
+          tree:path dc:modified ;
+          tree:value "{{next_fragment_time}}"^^xsd:dateTime
+        ] ;
+        {% endif %}
+        ldes:retentionPolicy [
+            a ldes:LatestVersionSubset ;
+            ldes:amount {{retention_period}} ;
+            ldes:versionKey ( dc:isVersionOf )
+        ] .
+    
+    <http://example.org/ldes/>
+      a ldes:EventStream ;
+      ldes:timestampPath dc:modified ;
+      ldes:versionOfPath dc:isVersionOf ;
+      tree:shape [
+        a sh:NodeShape ;
+        sh:nodeKind sh:IRI ;
+        sh:property [
+          sh:datatype xsd:string ;
+          sh:minCount 1 ;
+          sh:path dc:isVersionOf
+        ],
+        [
+          sh:datatype xsd:dateTime ;
+          sh:minCount 1 ;
+          sh:path dc:modified
+        ],
+        [
+          sh:datatype xsd:string ;
+          sh:minCount 1 ;
+          sh:path skos:altLabel
+        ],
+        [
+          sh:datatype xsd:string ;
+          sh:minCount 1 ;
+          sh:path skos:prefLabel
+        ],
+        [
+          sh:datatype xsd:string ;
+          sh:minCount 1 ;
+          sh:path skos:definition
+        ],
+        [
+          sh:datatype xsd:string ;
+          sh:minCount 1 ;
+          sh:path skos:notation
+        ];
+        sh:targetClass skos:Concept
+      ] ;
+      tree:view <http://example.org/ldes/{{this_fragment_delta}}> ;
+      .
+    
+    {% for result in sets['qres'] -%}
+    <http://example.org/ldes/> tree:member <{{result.content.uri}}> .
+    <{{result.content.uri}}>
+        a skos:Concept ;
+        dc:isVersionOf "{{result.content.conceptid}}".
+    {% for label in result.content.labels -%}
+    {% for translation in label.translations -%}
+    <{{ label.path }}> "{{ translation.value }}"@{{ translation.language }} .
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
