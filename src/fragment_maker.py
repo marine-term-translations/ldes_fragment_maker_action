@@ -24,11 +24,6 @@ parser.add_argument(
 args = parser.parse_args()
 
 print(f"Branch name is: {args.branch}")
-
-QUERYBUILDER = J2RDFSyntaxBuilder(
-    templates_folder=pathlib.Path(__file__).parent / "templates"
-)
-
 CONFIG_LOCATION = pathlib.Path(__file__).parent / "../config.yml"
 
 # Load objects from the objects.json file
@@ -41,6 +36,29 @@ with open(
 
 # Filter objects by branch
 filtered_objects = [obj for obj in objects_file if obj.get("branch") == args.branch]
+
+# Ensure the LDES folder exists
+ldes_folder = pathlib.Path(__file__).parent.parent / "LDES"
+ldes_folder.mkdir(exist_ok=True)
+
+
+largest_numbered_file = None
+if ldes_folder.exists() and ldes_folder.is_dir():
+    ldes_files = list(ldes_folder.iterdir())
+    print(f"LDES files: {ldes_files}")
+    if ldes_files and len(ldes_files) > 0:
+        other_ldes_fragments = True
+        # Extract the largest numbered file
+        numbered_files = [
+            int(match.group(1)) for file in ldes_files if (match := re.search(r"(\d+)", file.stem))
+            for file in ldes_files
+            if re.search(r"(\d+)", file.stem)
+        ]
+        print(f"Numbered files: {numbered_files}")
+        if numbered_files:
+            largest_numbered_file = max(numbered_files)
+
+next_delta_quoted = str(largest_numbered_file) if largest_numbered_file else None
 
 # Search for matching .yml files across all folders and read their contents
 gathered_data = []
@@ -64,8 +82,6 @@ for obj in filtered_objects:
                     {"file_name": obj["file_name"], "content": content}
                 )
 
-next_delta_quoted = "tobefilledinhere"
-
 # Write gathered data to gathered.json
 with open(
     pathlib.Path(__file__).parent / f"../gathered.json",
@@ -88,13 +104,22 @@ with open(
 
 languages = config.get("target_languages", [])
 print(f"Languages: {languages}")
+print(f"Config: {config}")
+
+paths = []
+
+for item in config["sources"][0]["items"]:
+    print(f"Item: {item}")
+    paths.append(item["path"])
 # make vars dict
 vars_dict = {
-    "this_fragment_delta": args.branch,
+    "base_uri": config["base_uri"] + "/ldes/",
+    "this_fragment_delta": date_epoch,
     "next_fragment_delta": next_delta_quoted,
     "next_fragment_time": date,
     "retention_period": 100,
     "languages": languages,
+    "paths": paths,
 }
 
 output_file = str(date_epoch) + ".ttl"  

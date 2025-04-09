@@ -14,12 +14,12 @@
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
     @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
     
-    <http://example.org/ldes/{{this_fragment_delta}}>
+    <{{base_uri}}{{this_fragment_delta}}.ttl>
         a tree:Node ;
         {% if next_fragment_delta %}
         tree:relation [
           a tree:LessThanRelation ;
-          tree:node <http://example.org/ldes/{{next_fragment_delta}}> ;
+          tree:node <{{base_uri}}{{next_fragment_delta}}> ;
           tree:path dc:modified ;
           tree:value "{{next_fragment_time}}"^^xsd:dateTime
         ] ;
@@ -30,49 +30,31 @@
             ldes:versionKey ( dc:isVersionOf )
         ] .
     
-    <http://example.org/ldes/>
+    <{{base_uri}}>
       a ldes:EventStream ;
       ldes:timestampPath dc:modified ;
       ldes:versionOfPath dc:isVersionOf ;
       tree:shape [
         a sh:NodeShape ;
         sh:nodeKind sh:IRI ;
+        {% for path in paths -%}
+        sh:property [
+          sh:datatype xsd:string ;
+          sh:minCount 1 ;
+          sh:path <{{path}}> 
+        ],
+        {% endfor -%}
         sh:property [
           sh:datatype xsd:string ;
           sh:minCount 1 ;
           sh:path dc:isVersionOf
-        ],
-        [
-          sh:datatype xsd:dateTime ;
-          sh:minCount 1 ;
-          sh:path dc:modified
-        ],
-        [
-          sh:datatype xsd:string ;
-          sh:minCount 1 ;
-          sh:path skos:altLabel
-        ],
-        [
-          sh:datatype xsd:string ;
-          sh:minCount 1 ;
-          sh:path skos:prefLabel
-        ],
-        [
-          sh:datatype xsd:string ;
-          sh:minCount 1 ;
-          sh:path skos:definition
-        ],
-        [
-          sh:datatype xsd:string ;
-          sh:minCount 1 ;
-          sh:path skos:notation
         ];
         sh:targetClass skos:Concept
       ] ;
-      tree:view <http://example.org/ldes/{{this_fragment_delta}}> ;
+      tree:view <{{base_uri}}{{this_fragment_delta}}.ttl> ;
       .
     {% for result in sets['qres'] -%}
-    <http://example.org/ldes/> tree:member <{{result.content.uri}}> .
+    <{{base_uri}}> tree:member <{{result.content.uri}}> .
     <{{result.content.uri}}>
         a skos:Concept ;
         {% for label in result.content.labels -%}
