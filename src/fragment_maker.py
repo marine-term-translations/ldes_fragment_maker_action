@@ -29,6 +29,8 @@ QUERYBUILDER = J2RDFSyntaxBuilder(
     templates_folder=pathlib.Path(__file__).parent / "templates"
 )
 
+CONFIG_LOCATION = pathlib.Path(__file__).parent / "../config.yml"
+
 # Load objects from the objects.json file
 with open(
     pathlib.Path(__file__).parent / f"../objects.json",
@@ -74,16 +76,28 @@ with open(
 
 # Get the current datetime in CCYY-MM-DDThh:mm:ss.sss format
 date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+date_epoch = int(datetime.now().timestamp())
+print(f"Date: {date}")
 
+with open(
+    CONFIG_LOCATION,
+    "r",
+    encoding="utf-8",
+) as config_file:
+    config = yaml.safe_load(config_file)
+
+languages = config.get("target_languages", [])
+print(f"Languages: {languages}")
 # make vars dict
 vars_dict = {
     "this_fragment_delta": args.branch,
     "next_fragment_delta": next_delta_quoted,
     "next_fragment_time": date,
     "retention_period": 100,
+    "languages": languages,
 }
 
-output_file = "ldes_fragment_" + args.branch + ".ttl"  
+output_file = str(date_epoch) + ".ttl"  
 
 # make service and sink
 service = JinjaBasedGenerator(pathlib.Path(__file__).parent / "templates")

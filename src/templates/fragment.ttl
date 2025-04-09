@@ -71,15 +71,19 @@
       ] ;
       tree:view <http://example.org/ldes/{{this_fragment_delta}}> ;
       .
-    
     {% for result in sets['qres'] -%}
     <http://example.org/ldes/> tree:member <{{result.content.uri}}> .
     <{{result.content.uri}}>
         a skos:Concept ;
-        dc:isVersionOf "{{result.content.conceptid}}".
-    {% for label in result.content.labels -%}
-    {% for translation in label.translations -%}
-    <{{ label.path }}> "{{ translation.value }}"@{{ translation.language }} .
-    {% endfor %}
-    {% endfor %}
-    {% endfor %}
+        {% for label in result.content.labels -%}
+        {% for translation in label.translations -%}
+        {% for lang in languages -%}
+        {% if translation[lang] -%}
+        <{{ label.path }}> "{{ translation[lang] }}"@{{ lang }} ;
+        {% endif -%}
+        {% endfor -%}
+        {% endfor -%}
+        {% endfor -%}
+        dc:isVersionOf "{{result.content.conceptid}}" 
+        .
+    {% endfor -%}
