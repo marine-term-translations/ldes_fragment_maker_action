@@ -7,8 +7,7 @@ echo "repo name is:" $GITHUB_REPOSITORY
 cd ../..
 pwd
 ls -al
-# copy over ./github/workspace/* /*
-rsync --recursive --progress -avzh ./github/workspace/* ./
+
 
 echo "Branch name is:" $INPUT_BRANCH
 
@@ -24,8 +23,14 @@ git config --global user.email 'actions@github.com'
 git fetch --all
 BRANCHES=$(git branch -a)
 echo "$BRANCHES"
+git pull origin $INPUT_BRANCH
+git checkout $INPUT_BRANCH
 
 cd ../..
+
+# copy over ./github/workspace/* /*
+rsync --recursive --progress -avzh ./github/workspace/* ./
+
 cd src
 
 python fragment_maker.py --branch $INPUT_BRANCH
@@ -34,7 +39,41 @@ cd ..
 cd ./github/workspace
 git checkout main
 cd ../..
-rsync --recursive --progress -avzhq --exclude=.git --exclude=.github --exclude=.dockerenv --exclude=README.md --exclude=bin --exclude=boot --exclude=config.yml --exclude=dev --exclude=entrypoint.sh --exclude=etc --exclude=github --exclude=home --exclude=lib --exclude=lib64 --exclude=media --exclude=mnt --exclude=opt --exclude=proc --exclude=node_modules --exclude=package-lock.json --exclude=package.json --exclude=poetry.lock --exclude=pyproject.toml --exclude=run --exclude=root --exclude=sbin --exclude=src --exclude=srv --exclude=sys --exclude=tmp --exclude=usr --exclude=var ./ ./github/workspace
+rsync --recursive --progress -avzhq \
+    --exclude=.git \
+    --exclude=.github \
+    --exclude=.dockerenv \
+    --exclude=README.md \
+    --exclude=bin \
+    --exclude=boot \
+    --exclude=config.yml \
+    --exclude=dev \
+    --exclude=entrypoint.sh \
+    --exclude=etc \
+    --exclude=github \
+    --exclude=home \
+    --exclude=lib \
+    --exclude=lib64 \
+    --exclude=media \
+    --exclude=mnt \
+    --exclude=opt \
+    --exclude=proc \
+    --exclude=node_modules \
+    --exclude=package-lock.json \
+    --exclude=package.json \
+    --exclude=poetry.lock \
+    --exclude=pyproject.toml \
+    --exclude=run \
+    --exclude=root \
+    --exclude=sbin \
+    --exclude=src \
+    --exclude=srv \
+    --exclude=sys \
+    --exclude=tmp \
+    --exclude=usr \
+    --exclude=var \
+    --exclude=gathered.json \
+    ./ ./github/workspace
 cd ./github/workspace
 git add .
 git commit -m "Adding LDES fragments for branch $INPUT_BRANCH"
@@ -51,7 +90,41 @@ fi
 
 cd ../..
 # copy over overything in the LDES folder to ./github/workspace
-rsync --recursive --progress -avzh --exclude=.git --exclude=.github --exclude=entrypoint.sh --exclude=Dockerfile --exclude=README.md --exclude=LICENSE --exclude=.gitignore --exclude=.dockerignore --exclude=.env --exclude=package.json --exclude=poetry.lock --exclude=pyproject.toml --exclude=requirements.txt --exclude=package-lock.json --exclude=actions.yml ./LDES/ ./github/workspace/
+rsync --recursive --progress -avzhq \
+    --exclude=.git \
+    --exclude=.github \
+    --exclude=.dockerenv \
+    --exclude=README.md \
+    --exclude=bin \
+    --exclude=boot \
+    --exclude=config.yml \
+    --exclude=dev \
+    --exclude=entrypoint.sh \
+    --exclude=etc \
+    --exclude=github \
+    --exclude=home \
+    --exclude=lib \
+    --exclude=lib64 \
+    --exclude=media \
+    --exclude=mnt \
+    --exclude=opt \
+    --exclude=proc \
+    --exclude=node_modules \
+    --exclude=package-lock.json \
+    --exclude=package.json \
+    --exclude=poetry.lock \
+    --exclude=pyproject.toml \
+    --exclude=run \
+    --exclude=root \
+    --exclude=sbin \
+    --exclude=src \
+    --exclude=srv \
+    --exclude=sys \
+    --exclude=tmp \
+    --exclude=usr \
+    --exclude=var \
+    --exclude=gathered.json \
+    ./LDES ./github/workspace
 
 cd ./github/workspace
 git add .
