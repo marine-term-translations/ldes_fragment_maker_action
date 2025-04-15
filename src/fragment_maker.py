@@ -50,7 +50,9 @@ if ldes_folder.exists() and ldes_folder.is_dir():
         other_ldes_fragments = True
         # Extract the largest numbered file
         numbered_files = [
-            int(match.group(1)) for file in ldes_files if (match := re.search(r"(\d+)", file.stem))
+            int(match.group(1))
+            for file in ldes_files
+            if (match := re.search(r"(\d+)", file.stem))
             for file in ldes_files
             if re.search(r"(\d+)", file.stem)
         ]
@@ -73,7 +75,10 @@ for obj in filtered_objects:
                 # Extract the base URI and concept ID from the content URI
                 # example http://vocab.nerc.ac.uk/collection/P02/current/EPSV/2/
                 # result: http://vocab.nerc.ac.uk/collection/P02/EPSV 2
-                base_uri_match = re.match(r"(http://vocab\.nerc\.ac\.uk/collection/[^/]+/)[^/]+/([^/]+)/", content_uri)
+                base_uri_match = re.match(
+                    r"(http://vocab\.nerc\.ac\.uk/collection/[^/]+/)[^/]+/([^/]+)/",
+                    content_uri,
+                )
                 if base_uri_match:
                     base_uri = base_uri_match.group(1) + base_uri_match.group(2)
                     content["conceptid"] = f"{base_uri}"
@@ -112,8 +117,13 @@ for item in config["sources"][0]["items"]:
     print(f"Item: {item}")
     paths.append(item["path"])
 # make vars dict
+
+# if config["base_uri"] ends with / remove it
+if config["base_uri"].endswith("/"):
+    config["base_uri"] = config["base_uri"][:-1]
+
 vars_dict = {
-    "base_uri": config["base_uri"] + "/ldes/",
+    "base_uri": config["base_uri"] + "/LDES/",
     "this_fragment_delta": date_epoch,
     "next_fragment_delta": next_delta_quoted,
     "next_fragment_time": date,
@@ -122,15 +132,15 @@ vars_dict = {
     "paths": paths,
 }
 
-output_file = str(date_epoch) + ".ttl"  
+output_file = str(date_epoch) + ".ttl"
 
 # make service and sink
 service = JinjaBasedGenerator(pathlib.Path(__file__).parent / "templates")
-sink = SinkFactory.make_sink(
-    os.path.join(project_root, "LDES", output_file), False
-)
-inputs = {"qres": SourceFactory.make_source(str(pathlib.Path(__file__).parent / f"../gathered.json"))}
+sink = SinkFactory.make_sink(os.path.join(project_root, "LDES", output_file), False)
+inputs = {
+    "qres": SourceFactory.make_source(
+        str(pathlib.Path(__file__).parent / f"../gathered.json")
+    )
+}
 settings = GeneratorSettings()
 service.process("fragment.ttl", inputs, settings, sink, vars_dict)
-
-
