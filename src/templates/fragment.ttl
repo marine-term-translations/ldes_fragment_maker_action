@@ -13,13 +13,15 @@
     @prefix sh: <http://www.w3.org/ns/shacl#> .
     @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
     @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+    @base <{{base_uri}}{{this_fragment_delta}}.ttl> .
     
-    <{{base_uri}}{{this_fragment_delta}}.ttl>
+    <>
         a tree:Node ;
         {% if next_fragment_delta %}
         tree:relation [
           a tree:LessThanRelation ;
-          tree:node <{{base_uri}}{{next_fragment_delta}}> ;
+          tree:node <{{base_uri}}{{next_fragment_delta}}.ttl> ;
           tree:path dc:modified ;
           tree:value "{{next_fragment_time}}"^^xsd:dateTime
         ] ;
@@ -30,7 +32,7 @@
             ldes:versionKey ( dc:isVersionOf )
         ] .
     
-    <{{base_uri}}>
+    <../feed.ttl>
       a ldes:EventStream ;
       ldes:timestampPath dc:modified ;
       ldes:versionOfPath dc:isVersionOf ;
@@ -49,16 +51,19 @@
           sh:minCount 1 ;
           sh:path dc:isVersionOf
         ];
+        {# TODO : inject ID_path from config.yaml as targetClass #}
         sh:targetClass skos:Concept
       ] ;
-      tree:view <{{base_uri}}{{this_fragment_delta}}.ttl> ;
+      tree:view <> ;
       .
     {% for result in sets['qres'] -%}
-    <{{base_uri}}> tree:member <{{result.content.uri}}> .
-    <{{result.content.uri}}>
+    <> tree:member <#{{result.file_name}}> .
+    <#{{result.file_name}}>
+        {# TODO : inject ID_path from config.yaml as type #}
         a skos:Concept ;
         {% for label in result.content.labels -%}
         {% for translation in label.translations -%}
+        {% set languages = translation.keys() -%}
         {% for lang in languages -%}
         {% if translation[lang] -%}
         <{{ label.path }}> "{{ translation[lang] }}"@{{ lang }} ;
