@@ -144,3 +144,12 @@ inputs = {
 }
 settings = GeneratorSettings()
 service.process("fragment.ttl", inputs, settings, sink, vars_dict)
+
+if os.path.exists(os.path.join(project_root, "LDES", "latest.ttl")):
+    os.remove(os.path.join(project_root, "LDES", "latest.ttl"))
+# make a second file that will be called latest
+# this has the same vars but with this_fragment_delta "latest"
+vars_dict["this_fragment_delta"] = "latest"
+output_file = "latest.ttl"
+sink = SinkFactory.make_sink(os.path.join(project_root, "LDES", output_file), False)
+service.process("fragment.ttl", inputs, settings, sink, vars_dict)

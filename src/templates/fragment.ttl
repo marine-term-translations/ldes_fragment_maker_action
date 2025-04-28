@@ -44,7 +44,7 @@
           sh:datatype xsd:string ;
           sh:minCount 1 ;
           sh:path <{{path}}> 
-        ],
+        ];
         {% endfor -%}
         sh:property [
           sh:datatype xsd:string ;
