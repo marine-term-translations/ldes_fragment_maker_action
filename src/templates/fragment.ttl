@@ -32,7 +32,7 @@
             ldes:versionKey ( dc:isVersionOf )
         ] .
     
-    <../feed.ttl>
+    <feed>
       a ldes:EventStream ;
       ldes:timestampPath dc:modified ;
       ldes:versionOfPath dc:isVersionOf ;

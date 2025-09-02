@@ -75,6 +75,9 @@ rsync --recursive --progress -avzhq \
     --exclude=gathered.json \
     ./ ./github/workspace
 cd ./github/workspace
+
+# make a symlink from /LDES/latest.ttl to feed
+ln -sf /LDES/latest.ttl feed
 git add .
 git commit -m "Adding LDES fragments for branch $INPUT_BRANCH"
 git push origin main
