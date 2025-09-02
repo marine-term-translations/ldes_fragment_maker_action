@@ -174,6 +174,8 @@ rsync --recursive --progress -avzhq \
     ./LDES ./github/workspace
 
 cd ./github/workspace
+# symlink feed to latest
+ln -sf /LDES/latest.ttl feed
 git add .
 git commit -m "Adding LDES fragments made from processing data in branch $INPUT_BRANCH"
 git push origin gh-pages
