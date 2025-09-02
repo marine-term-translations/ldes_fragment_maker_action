@@ -77,7 +77,7 @@ rsync --recursive --progress -avzhq \
 cd ./github/workspace
 
 # make a symlink from /LDES/latest.ttl to feed
-cd /LDES
+cd ./LDES
 ln -sf latest.ttl feed
 cd ..
 git add .
@@ -177,7 +177,7 @@ rsync --recursive --progress -avzhq \
 
 cd ./github/workspace
 # symlink feed to latest
-cd /LDES
+cd ./LDES
 ln -sf latest.ttl feed
 cd ..
 git add .
