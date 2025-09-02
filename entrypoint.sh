@@ -130,3 +130,47 @@ cd ./github/workspace
 git add .
 git commit -m "Adding LDES fragments for branch $INPUT_BRANCH"
 git push origin LDES
+
+# Now we can copy over the LDES folder into the gh-pages branch
+git checkout gh-pages
+cd ../..
+rsync --recursive --progress -avzhq \
+    --exclude=.git \
+    --exclude=.github \
+    --exclude=.dockerenv \
+    --exclude=README.md \
+    --exclude=bin \
+    --exclude=boot \
+    --exclude=config.yml \
+    --exclude=dev \
+    --exclude=entrypoint.sh \
+    --exclude=etc \
+    --exclude=github \
+    --exclude=home \
+    --exclude=lib \
+    --exclude=lib64 \
+    --exclude=media \
+    --exclude=mnt \
+    --exclude=opt \
+    --exclude=proc \
+    --exclude=node_modules \
+    --exclude=package-lock.json \
+    --exclude=package.json \
+    --exclude=poetry.lock \
+    --exclude=pyproject.toml \
+    --exclude=run \
+    --exclude=root \
+    --exclude=sbin \
+    --exclude=src \
+    --exclude=srv \
+    --exclude=sys \
+    --exclude=tmp \
+    --exclude=usr \
+    --exclude=var \
+    --exclude=gathered.json \
+    ./LDES ./github/workspace
+
+cd ./github/workspace
+git add .
+git commit -m "Adding LDES fragments made from processing data in branch $INPUT_BRANCH"
+git push origin gh-pages
