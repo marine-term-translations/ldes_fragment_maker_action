@@ -6,7 +6,7 @@ import re
 import os
 import json
 import yaml
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import shutil
 from sema.subyt import (
     Generator,
@@ -95,15 +95,17 @@ with open(
     encoding="utf-8",
 ) as f:
     json.dump(gathered_data, f, indent=4)
-
-# Get the current datetime in CCYY-MM-DDThh:mm:ss.sss format
-date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
-date_epoch = int(datetime.now().timestamp())
+    
+# Current datetime in UTC with "Z" suffix
+now_utc = datetime.now(timezone.utc)
+date = now_utc.strftime("%Y-%m-%dT%H:%M:%S") + "Z"
+date_epoch = int(now_utc.timestamp())
 print(f"Date: {date}")
 
-#create a date for last file modification which is 1 second younger then date_epoch
-last_modified_date = (datetime.now() - timedelta(seconds=1)).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
-last_modified_epoch = int((datetime.now() - timedelta(seconds=1)).timestamp())
+# Last modified datetime = 1 second earlier
+last_modified_utc = now_utc - timedelta(seconds=1)
+last_modified_date = last_modified_utc.strftime("%Y-%m-%dT%H:%M:%S") + "Z"
+last_modified_epoch = int(last_modified_utc.timestamp())
 print(f"Last Modified Date: {last_modified_date}")
 
 with open(
