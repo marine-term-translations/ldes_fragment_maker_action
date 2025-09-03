@@ -76,6 +76,7 @@
         {% endfor -%}
         {% endfor -%}
         {% endfor -%}
+        dc:modified "{{last_modified_date}}"^^xsd:dateTime ;
         a skos:Concept .
     
     <{{result.content.conceptid}}>
