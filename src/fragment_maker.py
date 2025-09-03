@@ -6,7 +6,7 @@ import re
 import os
 import json
 import yaml
-from datetime import datetime
+from datetime import datetime, timedelta
 import shutil
 from sema.subyt import (
     Generator,
@@ -101,6 +101,11 @@ date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 date_epoch = int(datetime.now().timestamp())
 print(f"Date: {date}")
 
+#create a date for last file modification which is 1 second younger then date_epoch
+last_modified_date = (datetime.now() - timedelta(seconds=1)).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+last_modified_epoch = int((datetime.now() - timedelta(seconds=1)).timestamp())
+print(f"Last Modified Date: {last_modified_date}")
+
 with open(
     CONFIG_LOCATION,
     "r",
@@ -128,6 +133,7 @@ vars_dict = {
     "this_fragment_delta": date_epoch,
     "next_fragment_delta": next_delta_quoted,
     "next_fragment_time": date,
+    "last_modified_date": last_modified_date,
     "retention_period": 100,
     "languages": languages,
     "paths": paths,

@@ -47,6 +47,11 @@
         ];
         {% endfor -%}
         sh:property [
+          sh:datatype xsd:dateTime ;
+          sh:minCount 1 ;
+          sh:path dc:modified
+        ];
+        sh:property [
           sh:datatype xsd:string ;
           sh:minCount 1 ;
           sh:path dc:isVersionOf
@@ -60,7 +65,10 @@
     <> tree:member <#{{result.file_name}}> .
     <#{{result.file_name}}>
         {# TODO : inject ID_path from config.yaml as type #}
-        a skos:Concept ;
+        dc:isVersionOf "{{result.content.conceptid}}" ;
+        a skos:Concept .
+    
+    <{{result.content.conceptid}}>
         {% for label in result.content.labels -%}
         {% for translation in label.translations -%}
         {% set languages = translation.keys() -%}
@@ -71,6 +79,6 @@
         {% endfor -%}
         {% endfor -%}
         {% endfor -%}
-        dc:isVersionOf "{{result.content.conceptid}}" 
+        dc:modified "{{last_modified_date}}"^^xsd:dateTime 
         .
     {% endfor -%}
