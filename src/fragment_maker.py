@@ -136,7 +136,7 @@ vars_dict = {
     "next_fragment_delta": next_delta_quoted,
     "next_fragment_time": date,
     "last_modified_date": last_modified_date,
-    "retention_period": 100,
+    "retention_period": 1,
     "languages": languages,
     "paths": paths,
 }

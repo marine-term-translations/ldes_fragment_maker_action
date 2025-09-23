@@ -28,8 +28,7 @@
         {% endif %}
         ldes:retentionPolicy [
             a ldes:LatestVersionSubset ;
-            ldes:amount {{retention_period}} ;
-            ldes:versionKey ( dc:isVersionOf )
+            ldes:versionAmount {{retention_period}}
         ] .
     
     <feed>
