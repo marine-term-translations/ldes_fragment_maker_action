@@ -24,7 +24,7 @@ git fetch --all
 BRANCHES=$(git branch -a)
 echo "$BRANCHES"
 git pull origin $INPUT_BRANCH
-git checkout main
+# git checkout main
 
 cd ../..
 
