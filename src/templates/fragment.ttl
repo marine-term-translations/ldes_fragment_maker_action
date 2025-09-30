@@ -63,9 +63,18 @@
     {% for result in sets['qres'] -%}
     <> tree:member <#{{result.file_name}}> .
     <#{{result.file_name}}>
-        {# TODO : inject ID_path from config.yaml as type #}
         dc:isVersionOf "{{result.content.conceptid}}" ;
         dc:modified "{{last_modified_date}}"^^xsd:dateTime ;
+        {% for label in result.content.labels -%}
+        {% for translation in label.translations -%}
+        {% set languages = translation.keys() -%}
+        {% for lang in languages -%}
+        {% if translation[lang] -%}
+        <{{ label.path }}> "{{ translation[lang] }}"@{{ lang }} ;
+        {% endif -%}
+        {% endfor -%}
+        {% endfor -%}
+        {% endfor -%}
         a skos:Concept .
     
     <{{result.content.conceptid}}>
