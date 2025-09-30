@@ -65,16 +65,6 @@
     <#{{result.file_name}}>
         {# TODO : inject ID_path from config.yaml as type #}
         dc:isVersionOf "{{result.content.conceptid}}" ;
-        {% for label in result.content.labels -%}
-        {% for translation in label.translations -%}
-        {% set languages = translation.keys() -%}
-        {% for lang in languages -%}
-        {% if translation[lang] -%}
-        <{{ label.path }}> "{{ translation[lang] }}"@{{ lang }} ;
-        {% endif -%}
-        {% endfor -%}
-        {% endfor -%}
-        {% endfor -%}
         dc:modified "{{last_modified_date}}"^^xsd:dateTime ;
         a skos:Concept .
     
