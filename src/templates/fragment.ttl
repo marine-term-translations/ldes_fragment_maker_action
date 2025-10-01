@@ -70,7 +70,7 @@
         {% set languages = translation.keys() -%}
         {% for lang in languages -%}
         {% if translation[lang] -%}
-        <{{ label.path }}> "{{ translation[lang] }}"@{{ lang }} ;
+        <{{ label.path }}> {{ translation[lang] | xsd("string") }}@{{ lang }} ;
         {% endif -%}
         {% endfor -%}
         {% endfor -%}
@@ -83,7 +83,7 @@
         {% set languages = translation.keys() -%}
         {% for lang in languages -%}
         {% if translation[lang] -%}
-        <{{ label.path }}> "{{ translation[lang] }}"@{{ lang }} ;
+        <{{ label.path }}> {{ translation[lang] | xsd("string") }}@{{ lang }} ;
         {% endif -%}
         {% endfor -%}
         {% endfor -%}
