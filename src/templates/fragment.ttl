@@ -61,33 +61,33 @@
       tree:view <> ;
       .
     {% for result in sets['qres'] -%}
-    <> tree:member <#{{result.file_name}}> .
+    <feed> tree:member <#{{result.file_name}}> .
     <#{{result.file_name}}>
-        dc:isVersionOf "{{result.content.conceptid}}" ;
-        dc:modified "{{last_modified_date}}"^^xsd:dateTime ;
+        dc:isVersionOf {{result.content.conceptid | uri}} ;
+        dc:modified {{last_modified_date | xsd("datetime")}} ;
         {% for label in result.content.labels -%}
         {% for translation in label.translations -%}
         {% set languages = translation.keys() -%}
         {% for lang in languages -%}
         {% if translation[lang] -%}
-        <{{ label.path }}> {{ translation[lang] | xsd("string") }}@{{ lang }} ;
+        {{ label.path |uri }} {{ translation[lang] | xsd("@"~lang) }} ;
         {% endif -%}
         {% endfor -%}
         {% endfor -%}
         {% endfor -%}
         a skos:Concept .
     
-    <{{result.content.conceptid}}>
+    {{result.content.conceptid | uri}}
         {% for label in result.content.labels -%}
         {% for translation in label.translations -%}
         {% set languages = translation.keys() -%}
         {% for lang in languages -%}
         {% if translation[lang] -%}
-        <{{ label.path }}> {{ translation[lang] | xsd("string") }}@{{ lang }} ;
+        {{ label.path | uri}} {{ translation[lang] | xsd("@"~lang) }} ;
         {% endif -%}
         {% endfor -%}
         {% endfor -%}
         {% endfor -%}
-        dc:modified "{{last_modified_date}}"^^xsd:dateTime 
+        dc:modified {{last_modified_date | xsd("datetime")}};
         .
     {% endfor -%}
